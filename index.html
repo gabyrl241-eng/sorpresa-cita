@@ -4,3 +4,199 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cita Confirmada 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: radial-gradient(circle, #ff7b00, #0a0a0a);
+  color:white;
+  font-family:"Noto Sans JP", sans-serif;
+  overflow:hidden;
+}
+
+/* 🌌 Fondo animado tipo anime */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background: linear-gradient(270deg,#ff7b00,#ff4d6d,#a18cd1,#ff7b00);
+  background-size:600% 600%;
+  animation:bgMove 12s ease infinite;
+  z-index:-1;
+}
+
+@keyframes bgMove{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* 🌟 Partículas tipo anime */
+.particle{
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:white;
+  border-radius:50%;
+  animation: float 5s linear infinite;
+}
+
+@keyframes float{
+  0%{transform:translateY(0); opacity:1;}
+  100%{transform:translateY(-100vh); opacity:0;}
+}
+
+/* 🔥 Aura */
+.aura{
+  position:absolute;
+  width:350px;
+  height:350px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(255,140,0,0.6), transparent);
+  animation: spin 5s linear infinite;
+}
+
+@keyframes spin{
+  0%{ transform:rotate(0deg) scale(1);} 
+  50%{ transform:rotate(180deg) scale(1.3);} 
+  100%{ transform:rotate(360deg) scale(1);} 
+}
+
+/* 💖 Contenedor */
+.container{
+  text-align:center;
+  animation: fadeIn 1.5s ease;
+  backdrop-filter: blur(10px);
+  background: rgba(0,0,0,0.3);
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.5);
+}
+
+/* ✨ Texto */
+h1{
+  font-size:2.8rem;
+  margin-bottom:10px;
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow{
+  from{ text-shadow:0 0 10px #fff;}
+  to{ text-shadow:0 0 25px #ff4d6d;}
+}
+
+p{
+  font-size:1.2rem;
+}
+
+/* 🎬 Botón */
+.btn{
+  margin-top:20px;
+  padding:12px 25px;
+  border:none;
+  border-radius:12px;
+  background: linear-gradient(135deg,#ff4d6d,#ff7b00);
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.btn:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 20px #ff4d6d;
+}
+
+/* 💖 corazones flotando */
+.heart{
+  position:absolute;
+  font-size:20px;
+  animation: heartFloat 3s linear forwards;
+}
+
+@keyframes heartFloat{
+  0%{transform:translateY(0); opacity:1;}
+  100%{transform:translateY(-150px); opacity:0;}
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:scale(0.8);} 
+  to{opacity:1; transform:scale(1);} 
+}
+</style>
+</head>
+
+<body>
+
+<div class="aura"></div>
+
+<div class="container">
+  <h1>🎬 Cita Confirmada 💖</h1>
+  <p id="info"></p>
+
+  <button class="btn" id="calendarBtn">📅 Guardar en calendario</button>
+</div>
+
+<script>
+// 🎯 Obtener datos del QR
+const params = new URLSearchParams(window.location.search);
+const fecha = params.get('fecha');
+const hora = params.get('hora');
+const peli = params.get('peli');
+
+const info = document.getElementById('info');
+info.textContent = `Nos vemos el ${fecha} a las ${hora} para ver ${peli} 💕`;
+
+// 💖 partículas
+setInterval(() => {
+  const p = document.createElement("div");
+  p.className = "particle";
+  p.style.left = Math.random()*100 + "vw";
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),5000);
+},200);
+
+// 💖 corazones al tocar
+document.body.addEventListener("click", (e)=>{
+  for(let i=0;i<5;i++){
+    const heart = document.createElement("div");
+    heart.className="heart";
+    heart.innerHTML="💖";
+    heart.style.left = e.clientX + "px";
+    heart.style.top = e.clientY + "px";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),3000);
+  }
+});
+
+// 📅 Calendario (.ics)
+document.getElementById('calendarBtn').addEventListener('click', () => {
+  const start = fecha.replace(/-/g, '') + 'T' + hora.replace(':','') + '00';
+  const end = start;
+
+  const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:Cita 💖
+DTSTART:${start}
+DTEND:${end}
+DESCRIPTION:Salida al cine
+END:VEVENT
+END:VCALENDAR`;
+
+  const blob = new Blob([ics], { type: 'text/calendar' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'cita.ics';
+  link.click();
+});
+</script>
+
+</body>
+</html>
